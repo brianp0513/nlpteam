@@ -40,6 +40,15 @@ def getTextFromFiles(df, data_path, depression, limit):
 
   return df
 
+def getTextFromFiles_Test(df_test, data_path, limit):
+  """Return Data Frame """
+
+  for file in os.listdir(data_path)[:limit]:
+    with open(data_path+"/"+file, 'r',encoding = "ISO-8859-1") as file1:
+      file1 = file1.read()
+      df_test = df_test.append({'text': file1 }, ignore_index=True)
+
+  return df_test
 
 def checkfilesCounts(data_path):
 
@@ -47,6 +56,7 @@ def checkfilesCounts(data_path):
 
 data_path_d = "reddit_depression"
 data_path_nd = "reddit_non_depression"
+data_path_d_test = "reddit_depression_testset"
 # data_path_d = "/content/drive/My Drive/NLP Team/code/reddit_depression"
 # data_path_nd = "/content/drive/My Drive/NLP Team/code/reddit_non_depression"
 
@@ -113,6 +123,9 @@ classifier = MultinomialNB()
 targets = df['depression'].values
 classifier.fit(counts, targets)
 # examples = ['let me die', "fucking shit kill me", "I love you", "I am happy","Sang Eon is gay"]
+examples= pd.DataFrame(columns = ['text'])
+examples=getTextFromFiles_Test(examples, data_path_d_test,1)
+print('this is result : ',examples)
 examples = [
 """
 I (32F) feel like a dumb brat characterizing the situation as abuse. I can't help but think: probably this doesn't apply here and I'm just finding excuses for not putting up with my dad who is who he is.
@@ -147,6 +160,7 @@ Of tact
 """
 ]
 # lstm = recommandation.
+
 example_counts = count_vectorizer.transform(examples)
 example_tfidf = tfidf_vectorizer.transform(example_counts)
 predictions_tfidf = classifier.predict(example_tfidf)
